@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ahmed Sameh Technical Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout idea: a model viewer. A live 3D wireframe frame sits behind everything and turns as you scroll; content rides over it in instrument panels. */
+:root {
+  --bg: #06090D;
+  --panel: rgba(11, 17, 24, 0.86);
+  --line: #1D2B3A;
+  --ink: #DCE6F0;
+  --dim: #8496A8;
+  --cy: #46E0FF;
+  --am: #FFB454;
+  --display: 'Space Grotesk', 'Trebuchet MS', Arial, sans-serif;
+  --mono: 'JetBrains Mono', 'Courier New', monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--display); font-size: 16px; line-height: 1.6; }
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+a:focus-visible { outline: 2px solid var(--cy); outline-offset: 3px; }
+h1, h2, h3 { margin: 0; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; text-wrap: balance; }
+p { margin: 0; } ul { margin: 0; padding-left: 1.1em; } figure { margin: 0; }
+#model { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+.page { position: relative; z-index: 1; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+.mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: .06em; }
+
+.top { position: sticky; top: 0; z-index: 20; background: rgba(6, 9, 13, .82); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 22px; padding-top: 12px; padding-bottom: 12px; }
+.top b { font-weight: 700; } .top b::before { content: "▣ "; color: var(--cy); }
+.top nav { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+.top a { font-family: var(--mono); font-size: 12.5px; text-decoration: none; color: var(--dim); }
+.top a:hover, .top a.on { color: var(--cy); } .top a::before { content: "/"; opacity: .5; margin-right: 2px; }
+
+.hero { min-height: 88vh; display: flex; align-items: center; padding: 60px 0; position: relative; }
+.hero .wrap { width: 100%; }
+.hero-t { display: flex; flex-direction: column; gap: 20px; max-width: 620px; }
+.hero .mono { color: var(--cy); }
+.hero h1 { font-size: clamp(54px, 9vw, 116px); line-height: .92; }
+.role { font-size: clamp(19px, 2.3vw, 26px); color: var(--ink); }
+.sum { color: var(--dim); max-width: 54ch; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+.btn { font-family: var(--mono); font-size: 13px; padding: 12px 18px; border: 1px solid var(--cy); color: var(--cy); text-decoration: none; position: relative; overflow: hidden; }
+.btn.fill { background: var(--cy); color: #04121A; font-weight: 500; }
+.btn:hover { box-shadow: 0 0 22px rgba(70, 224, 255, .45); }
+.hud { position: absolute; right: 24px; bottom: 34px; border: 1px solid var(--line); background: var(--panel); padding: 12px 16px; display: grid; grid-template-columns: auto auto; gap: 2px 18px; font-family: var(--mono); font-size: 12px; color: var(--dim); }
+.hud b { color: var(--cy); font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+.hud i { grid-column: 1 / -1; font-style: normal; color: var(--am); margin-bottom: 4px; }
+
+section { padding: 60px 0; }
+.box { border: 1px solid var(--line); background: var(--panel); backdrop-filter: blur(6px); padding: 34px 32px 38px; position: relative; }
+.box::before, .box::after { content: ""; position: absolute; width: 14px; height: 14px; border: 2px solid var(--cy); }
+.box::before { left: -1px; top: -1px; border-right: 0; border-bottom: 0; } .box::after { right: -1px; bottom: -1px; border-left: 0; border-top: 0; }
+.bh { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
+.tag { font-family: var(--mono); font-size: 12.5px; color: var(--cy); letter-spacing: .08em; }
+.tag span { color: var(--am); margin-right: 8px; }
+.bh h2 { font-size: clamp(30px, 4.4vw, 52px); }
+
+.nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.num { border: 1px solid var(--line); background: var(--panel); padding: 18px 20px; }
+.num b { display: block; font-size: clamp(48px, 6vw, 76px); line-height: 1; color: var(--cy); font-variant-numeric: tabular-nums; }
+.num span { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+
+.xp { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 6px 26px; padding: 22px 0 22px 18px; border-top: 1px solid var(--line); position: relative; }
+.xp::before { content: ""; position: absolute; left: 0; top: 22px; bottom: 22px; width: 2px; background: var(--cy); transform-origin: 50% 0; }
+.xp-when { font-family: var(--mono); font-size: 12.5px; color: var(--am); }
+.xp-body { display: flex; flex-direction: column; gap: 6px; }
+.xp h3 { font-size: 24px; }
+.xp-role { font-family: var(--mono); font-size: 12.5px; color: var(--cy); }
+.xp-proj { font-size: 15px; }
+.xp ul { color: var(--dim); font-size: 15px; max-width: 72ch; }
+
+.stages { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px; }
+.stage { border: 1px solid var(--line); padding: 16px 16px 20px; display: flex; flex-direction: column; gap: 8px; position: relative; background: rgba(6, 9, 13, .6); }
+.stage small { font-family: var(--mono); color: var(--am); font-size: 12px; }
+.stage h3 { font-size: 18px; }
+.stage p { color: var(--dim); font-size: 13.5px; line-height: 1.5; }
+.stage::after { content: ""; position: absolute; left: 100%; top: 28px; width: 22px; height: 2px; background: repeating-linear-gradient(90deg, var(--cy) 0 6px, transparent 6px 11px); background-size: 11px 2px; animation: flow .7s linear infinite; }
+.stage:last-child::after { display: none; }
+@keyframes flow { to { background-position: 11px 0; } }
+@media (prefers-reduced-motion: reduce) { .stage::after { animation: none; } }
+
+.pcs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 18px; }
+.pc { grid-column: span 2; border: 1px solid var(--line); background: rgba(6, 9, 13, .6); display: flex; flex-direction: column; transition: border-color .3s, box-shadow .3s, transform .3s; }
+.pc:nth-child(-n+2) { grid-column: span 3; }
+.pc:hover { border-color: var(--cy); box-shadow: 0 0 28px rgba(70, 224, 255, .18); transform: translateY(-4px); }
+.pc-img { overflow: hidden; position: relative; }
+.pc-img img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+.pc:hover .pc-img img { transform: scale(1.06); }
+.pc-img::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(6,9,13,.22) 0 1px, transparent 1px 3px); pointer-events: none; }
+.pc-body { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 4px; }
+.pc-id { font-family: var(--mono); font-size: 12px; color: var(--cy); display: flex; justify-content: space-between; gap: 10px; } .pc-id span { color: var(--am); }
+.pc h3 { font-size: 20px; }
+.pc-m { font-size: 13.5px; color: var(--ink); } .pc-w { font-size: 13.5px; color: var(--dim); } .pc-c { font-family: var(--mono); font-size: 10.5px; color: var(--dim); opacity: .8; }
+.also { margin-top: 20px; color: var(--dim); font-size: 14px; }
+
+.fnd { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 36px; align-items: center; }
+.fnd p { color: var(--dim); max-width: 48ch; }
+.cmp { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 12px; align-items: center; }
+.cmp svg { width: 100%; height: auto; }
+.cmp .raft { fill: rgba(70, 224, 255, .08); stroke: var(--cy); stroke-width: 1.5; } .cmp .col { fill: var(--am); }
+.cmp > span { color: var(--cy); font-size: 22px; }
+figcaption.c, .cap { font-family: var(--mono); font-size: 11.5px; color: var(--dim); margin-top: 8px; }
+
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.cols.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.card { border: 1px solid var(--line); background: rgba(6, 9, 13, .6); padding: 18px 18px 22px; display: flex; flex-direction: column; gap: 10px; }
+.card h3 { font-size: 19px; }
+.card small { font-family: var(--mono); font-size: 11px; color: var(--am); letter-spacing: .06em; }
+.card ul, .card p { color: var(--dim); font-size: 14.5px; }
+.card li::marker { color: var(--cy); }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 20px; }
+.pills b { font-family: var(--mono); font-weight: 400; font-size: 12px; color: var(--dim); margin-right: 6px; } .pills b::before { content: "$ "; color: var(--cy); }
+.pill { font-family: var(--mono); font-size: 12.5px; border: 1px solid var(--cy); color: var(--cy); padding: 5px 12px; }
+.gap { margin-top: 44px; }
+
+.contact h2 { font-size: clamp(44px, 8vw, 104px); }
+.contact h2::after { content: "_"; color: var(--cy); animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .contact h2::after { animation: none; } }
+.c-list { display: grid; gap: 0; margin-top: 28px; }
+.c-item { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 14px; padding: 12px 0; border-top: 1px solid var(--line); align-items: baseline; }
+.c-item span { font-family: var(--mono); font-size: 12.5px; color: var(--am); } .c-item span::before { content: "> "; color: var(--cy); }
+.c-item a, .c-item b { font-size: clamp(18px, 2.4vw, 26px); font-weight: 500; overflow-wrap: anywhere; text-decoration-color: var(--cy); text-underline-offset: 5px; }
+.foot { font-family: var(--mono); font-size: 11px; color: var(--dim); padding: 0 0 30px; }
+
+@media (max-width: 900px) {
+  .hud { position: static; margin-top: 28px; width: max-content; } .hero { display: block; min-height: 0; padding-top: 50px; }
+  .stages { grid-template-columns: 1fr 1fr; } .stage::after { display: none; } .pc, .pc:nth-child(-n+2) { grid-column: span 3; }
+  .fnd { grid-template-columns: 1fr; } .cols, .cols.four { grid-template-columns: 1fr 1fr; } .xp { grid-template-columns: 1fr; } .box { padding: 26px 20px 30px; }
+}
+@media (max-width: 560px) {
+  .nums, .stages, .cols, .cols.four { grid-template-columns: 1fr; } .pc, .pc:nth-child(-n+2) { grid-column: span 6; }
+  .cmp { grid-template-columns: 1fr; } .cmp > span { justify-self: center; transform: rotate(90deg); } .c-item { grid-template-columns: 1fr; gap: 0; }
+}
+</style>
+</head>
+<body>
+<canvas id="model" aria-hidden="true"></canvas>
+<div class="page">
+
+<header class="top"><div class="wrap">
+  <b>Ahmed Sameh</b>
+  <nav aria-label="Sections"><a href="#experience">experience</a><a href="#projects">projects</a><a href="#skills">skills</a><a href="#contact">contact</a></nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div class="hero-t">
+    <p class="mono">// cairo, egypt · structural bim</p>
+    <h1>Ahmed Sameh</h1>
+    <p class="role">Structural BIM Engineer and BIM Coordinator</p>
+    <p class="sum">I build and coordinate structural BIM models for complex building and infrastructure projects, from Preliminary Design and IFC submissions through shop drawings to As-Built. Currently at Dar Al-Handasah on Al Maktoum International Airport.</p>
+    <div class="cta"><a class="btn fill" href="#projects">open projects</a><a class="btn" href="#contact">contact</a></div>
+  </div>
+  <div class="hud" aria-hidden="true"><i>demo frame, live render</i><span>elements</span><b id="h-el">145</b><span>lod</span><b id="h-lod">400</b><span>rotation</span><b id="h-rot">000°</b></div>
+</div></div>
+
+<main>
+<section aria-label="At a glance"><div class="wrap">
+  <div class="nums">
+    <div class="num"><b data-n="13">13</b><span>key projects delivered or in progress</span></div>
+    <div class="num"><b data-n="3">3</b><span>countries: UAE, Saudi Arabia, Egypt</span></div>
+    <div class="num"><b data-n="5">5</b><span>engineering consultancies since 2023</span></div>
+  </div>
+</div></section>
+
+<section id="experience"><div class="wrap"><div class="box">
+  <div class="bh"><p class="tag"><span>01</span>experience.log</p><h2>From RC detailing to BIM coordination</h2></div>
+  <div class="xp"><p class="xp-when">Jun 2026 to present</p><div class="xp-body"><h3>Dar Al-Handasah</h3><p class="xp-role">Structural BIM Engineer</p><p class="xp-proj">AMIA: The Ultimate Airport, Concourse 4 (UAE)</p><ul><li>Coordinate structural BIM with multidisciplinary teams through design development and submission stages.</li><li>Prepare, review and coordinate Preliminary Design, Draft Final Design and IFC deliverables.</li><li>Identify and resolve interdisciplinary clashes, keeping models, drawings and packages consistent across revisions.</li></ul></div></div>
+<div class="xp"><p class="xp-when">Jun 2024 to Jun 2026</p><div class="xp-body"><h3>Advanced Consultancy Center (ACC)</h3><p class="xp-role">Structural BIM Engineer</p><p class="xp-proj">Seven Makkah, Seven Jazan, Seven Ahsa, Seven Khobar and CEER 2 (KSA)</p><ul><li>Developed and maintained structural BIM models for entertainment and industrial developments.</li><li>Prepared reinforced concrete shop drawings and reinforcement detailing.</li><li>Took models through the required Levels of Development to As-Built, coordinating with architectural and MEP disciplines.</li></ul></div></div>
+<div class="xp"><p class="xp-when">Jan 2024 to Jun 2024</p><div class="xp-body"><h3>Sanam Consultant</h3><p class="xp-role">Structural Engineer</p><p class="xp-proj">Prime Business Resort</p><ul><li>Prepared reinforced concrete structural detail drawings to approved design documentation.</li></ul></div></div>
+<div class="xp"><p class="xp-when">Mar 2023 to Jan 2024</p><div class="xp-body"><h3>Alpha for Engineering Solutions</h3><p class="xp-role">Structural Engineer</p><p class="xp-proj">Faculty of Science at Beni Suif University, National Bank of Kuwait, North Coast and Zayed town houses, King Salman Park (KSA)</p><ul><li>Prepared RC shop drawings and reinforcement detailing for slabs, beams, columns and foundations.</li></ul></div></div>
+<div class="xp"><p class="xp-when">Jan 2023 to Mar 2023</p><div class="xp-body"><h3>Al Khaldya Consultant</h3><p class="xp-role">Structural Engineer (Intern)</p><p class="xp-proj">New Administrative Capital Mall</p><ul><li>Redesigned the foundation from a uniform raft to isolated footings.</li></ul></div></div>
+</div></div></section>
+
+<section id="stages"><div class="wrap"><div class="box">
+  <div class="bh"><p class="tag"><span>02</span>delivery.pipeline</p><h2>Deliverables across the project lifecycle</h2></div>
+  <div class="stages">
+  <div class="stage"><small>01</small><h3>Preliminary Design</h3><p>Structural models and drawings coordinated with multidisciplinary teams.</p></div>
+<div class="stage"><small>02</small><h3>Draft Final Design</h3><p>Clash review and resolution, with revisions kept consistent across models and drawings.</p></div>
+<div class="stage"><small>03</small><h3>Issued for Construction</h3><p>IFC packages verified against project requirements and applicable standards.</p></div>
+<div class="stage"><small>04</small><h3>Construction</h3><p>RC shop drawings, reinforcement detailing and LOD development.</p></div>
+<div class="stage"><small>05</small><h3>As-Built</h3><p>Construction-stage updates carried through to As-Built deliverables.</p></div>
+  </div>
+</div></div></section>
+
+<section id="projects"><div class="wrap"><div class="box">
+  <div class="bh"><p class="tag"><span>03</span>projects.index</p><h2>Selected projects</h2></div>
+  <div class="pcs">
+  <article class="pc"><div class="pc-img"><img src="img/amia.jpg" alt="Design render of the new Al Maktoum International Airport terminal interior" width="1920" height="1082"></div><div class="pc-body"><p class="pc-id">PRJ-01 <span>2026 to present</span></p><h3>AMIA: The Ultimate Airport, Concourse 4</h3><p class="pc-m">Dar Al-Handasah · UAE</p><p class="pc-w">Structural BIM coordination, design-stage and IFC deliverables</p><p class="pc-c">Image: Government of Dubai Media Office</p></div></article>
+<article class="pc"><div class="pc-img"><img src="img/jazan.jpg" alt="Render of the Seven Jazan entertainment destination at night" width="930" height="523"></div><div class="pc-body"><p class="pc-id">PRJ-02 <span>2024 to 2026</span></p><h3>Seven Jazan</h3><p class="pc-m">ACC · Jazan, Saudi Arabia</p><p class="pc-w">Structural BIM modelling, coordination and shop drawings</p><p class="pc-c">Image: SEVEN</p></div></article>
+<article class="pc"><div class="pc-img"><img src="img/ceer.jpg" alt="Aerial render of the CEER electric vehicle manufacturing complex" width="1355" height="852"></div><div class="pc-body"><p class="pc-id">PRJ-03 <span>2024 to 2026</span></p><h3>CEER manufacturing complex</h3><p class="pc-m">ACC · Saudi Arabia</p><p class="pc-w">Structural BIM modelling, coordination and shop drawings</p><p class="pc-c">Image: Ceer</p></div></article>
+<article class="pc"><div class="pc-img"><img src="img/ahsa.jpg" alt="Seven Ahsa construction site with a tower crane and foundations in progress" width="480" height="360"></div><div class="pc-body"><p class="pc-id">PRJ-04 <span>2024 to 2026</span></p><h3>Seven Ahsa</h3><p class="pc-m">ACC · Al Ahsa, Saudi Arabia</p><p class="pc-w">3D structural modelling, coordination and shop-drawing packages</p><p class="pc-c">Site photo</p></div></article>
+<article class="pc"><div class="pc-img"><img src="img/nbk.jpg" alt="Render of the National Bank of Kuwait Egypt headquarters" width="480" height="356"></div><div class="pc-body"><p class="pc-id">PRJ-05 <span>2023 to 2024</span></p><h3>NBK Egypt Headquarters</h3><p class="pc-m">Alpha · New Administrative Capital, Egypt</p><p class="pc-w">RC detail drawings</p><p class="pc-c"></p></div></article>
+<article class="pc"><div class="pc-img"><img src="img/mountain-view.jpg" alt="Mountain View town houses around a landscaped lagoon" width="480" height="363"></div><div class="pc-body"><p class="pc-id">PRJ-06 <span>2023 to 2024</span></p><h3>Mountain View town houses</h3><p class="pc-m">Alpha · North Coast and Zayed, Egypt</p><p class="pc-w">Shop drawings and rebar detailing</p><p class="pc-c"></p></div></article>
+<article class="pc"><div class="pc-img"><img src="img/capital-mall.jpg" alt="Render of the New Administrative Capital Mall at dusk" width="480" height="250"></div><div class="pc-body"><p class="pc-id">PRJ-07 <span>2023</span></p><h3>New Administrative Capital Mall</h3><p class="pc-m">Al Khaldya · Egypt</p><p class="pc-w">Foundation redesign from raft to isolated footings</p><p class="pc-c"></p></div></article>
+<article class="pc"><div class="pc-img"><img src="img/prime.jpg" alt="Render of the Prime Business Resort courtyard" width="480" height="270"></div><div class="pc-body"><p class="pc-id">PRJ-08 <span>2024</span></p><h3>Prime Business Resort</h3><p class="pc-m">Sanam · Riyadh, Saudi Arabia</p><p class="pc-w">RC structural detail drawings</p><p class="pc-c"></p></div></article>
+  </div>
+  <p class="also">Also: Seven Makkah and Seven Khobar (ACC), Faculty of Science at Beni Suif University and King Salman Park, KSA (Alpha).</p>
+</div></div></section>
+
+<section><div class="wrap"><div class="box fnd">
+  <div class="bh" style="margin-bottom:0"><p class="tag"><span>04</span>highlight.foundation</p><h2 style="font-size:clamp(26px,3.4vw,40px)">Foundation redesign, New Administrative Capital Mall</h2>
+    <p>As an intern at Al Khaldya Consultant, I redesigned the foundation from a uniform raft to an isolated-footings system, reducing material quantities, concrete volume and construction cost.</p></div>
+  <div>
+    <div class="cmp">
+      <figure><svg viewBox="0 0 560 320" role="img" aria-label="Plan of twelve columns on one continuous raft slab"><rect class="raft" x="1" y="1" width="558" height="318"/>
+        <g class="col"><rect x="58" y="41" width="24" height="24"/><rect x="198" y="41" width="24" height="24"/><rect x="338" y="41" width="24" height="24"/><rect x="478" y="41" width="24" height="24"/><rect x="58" y="148" width="24" height="24"/><rect x="198" y="148" width="24" height="24"/><rect x="338" y="148" width="24" height="24"/><rect x="478" y="148" width="24" height="24"/><rect x="58" y="255" width="24" height="24"/><rect x="198" y="255" width="24" height="24"/><rect x="338" y="255" width="24" height="24"/><rect x="478" y="255" width="24" height="24"/></g></svg>
+        <figcaption class="c">before: uniform raft</figcaption></figure>
+      <span aria-hidden="true">→</span>
+      <figure><svg viewBox="0 0 560 320" role="img" aria-label="Plan of the same twelve columns, each on its own footing">
+        <g class="raft ft"><rect x="20" y="15" width="100" height="76"/><rect x="160" y="15" width="100" height="76"/><rect x="300" y="15" width="100" height="76"/><rect x="440" y="15" width="100" height="76"/><rect x="20" y="122" width="100" height="76"/><rect x="160" y="122" width="100" height="76"/><rect x="300" y="122" width="100" height="76"/><rect x="440" y="122" width="100" height="76"/><rect x="20" y="229" width="100" height="76"/><rect x="160" y="229" width="100" height="76"/><rect x="300" y="229" width="100" height="76"/><rect x="440" y="229" width="100" height="76"/></g>
+        <g class="col"><rect x="58" y="41" width="24" height="24"/><rect x="198" y="41" width="24" height="24"/><rect x="338" y="41" width="24" height="24"/><rect x="478" y="41" width="24" height="24"/><rect x="58" y="148" width="24" height="24"/><rect x="198" y="148" width="24" height="24"/><rect x="338" y="148" width="24" height="24"/><rect x="478" y="148" width="24" height="24"/><rect x="58" y="255" width="24" height="24"/><rect x="198" y="255" width="24" height="24"/><rect x="338" y="255" width="24" height="24"/><rect x="478" y="255" width="24" height="24"/></g></svg>
+        <figcaption class="c">after: isolated footings</figcaption></figure>
+    </div>
+    <p class="cap">schematic plans, not the actual column layout</p>
+  </div>
+</div></div></section>
+
+<section id="skills"><div class="wrap"><div class="box">
+  <div class="bh"><p class="tag"><span>05</span>skills.list</p><h2>Core capabilities</h2></div>
+  <div class="cols">
+  <div class="card"><h3>BIM and coordination</h3><ul><li>Structural BIM coordination</li><li>Multidisciplinary model coordination</li><li>Clash detection and resolution</li><li>Model and drawing review</li><li>Design-stage submissions</li></ul></div>
+<div class="card"><h3>Structural engineering</h3><ul><li>Reinforced concrete detailing</li><li>Structural shop drawings</li><li>Concrete structural drawings</li></ul></div>
+<div class="card"><h3>Model development and deliverables</h3><ul><li>LOD development</li><li>Preliminary and Draft Final Design</li><li>IFC submissions</li><li>Construction documentation</li><li>As-Built stage updates</li></ul></div>
+  </div>
+  <div class="pills"><b>Software</b><span class="pill">Revit</span><span class="pill">Navisworks</span><span class="pill">AutoCAD</span><span class="pill">AutoCAD Structural Detailing (ASD)</span></div>
+  <div class="bh gap"><p class="tag"><span>06</span>education.list</p><h2>Qualifications</h2></div>
+  <div class="cols four">
+  <div class="card"><small>DEGREE · 2017 TO 2022</small><h3>Bachelor of Civil Engineering</h3><p>Helwan University</p></div>
+<div class="card"><small>GRADUATION PROJECT</small><h3>Concrete structure design</h3><p>Grade: 84%</p></div>
+<div class="card"><small>DIPLOMA</small><h3>Structural BIM Diploma</h3><p>KAITECH</p></div>
+<div class="card"><small>TRAINING</small><h3>Consulting Design Office course</h3><p>Radiance Consulting Office. Grade: Excellent</p></div>
+  </div>
+  <div class="pills"><b>Languages</b><span class="pill">Arabic (native)</span><span class="pill">English (fluent)</span></div>
+</div></div></section>
+
+<section class="contact" id="contact"><div class="wrap"><div class="box">
+  <p class="tag" style="margin-bottom:12px"><span>07</span>contact</p>
+  <h2>Get in touch</h2>
+  <div class="c-list"><div class="c-item"><span>Email</span><a href="mailto:engahmedsameh2@gmail.com">engahmedsameh2@gmail.com</a></div><div class="c-item"><span>Phone</span><a href="tel:+201151983777">+20 115 198 3777</a></div><div class="c-item"><span>LinkedIn</span><a href="https://www.linkedin.com/in/ahmed-sameh-5009551b3/">linkedin.com/in/ahmed-sameh-5009551b3</a></div><div class="c-item"><span>Location</span><b>Cairo, Egypt</b></div></div>
+</div></div></section>
+</main>
+<div class="wrap"><p class="foot">project renders belong to their respective owners and are shown to identify the projects</p></div>
+</div>
+
+<script>
+/* 3D wireframe of a five-storey frame on a 4 by 3 grid, drawn on a 2D canvas with a hand-rolled projection. */
+(function () {
+  var cv = document.getElementById('model'), ctx = cv.getContext && cv.getContext('2d'); if (!ctx) return;
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var NX = 4, NY = 3, LV = 5, BAY = 6, H = 3.6, els = [], l, i, j;
+  var X = function (i) { return (i - (NX - 1) / 2) * BAY; }, Y = function (j) { return (j - (NY - 1) / 2) * BAY; };
+  for (l = 0; l < LV; l++) {
+    for (i = 0; i < NX; i++) for (j = 0; j < NY; j++) els.push({ a: [X(i), Y(j), l * H], b: [X(i), Y(j), (l + 1) * H], t: 0, l: l });
+    for (i = 0; i < NX - 1; i++) for (j = 0; j < NY; j++) els.push({ a: [X(i), Y(j), (l + 1) * H], b: [X(i + 1), Y(j), (l + 1) * H], t: 1, l: l });
+    for (i = 0; i < NX; i++) for (j = 0; j < NY - 1; j++) els.push({ a: [X(i), Y(j), (l + 1) * H], b: [X(i), Y(j + 1), (l + 1) * H], t: 1, l: l });
+  }
+  var N = els.length, W = 0, Hh = 0, dpr = 1, mx = 0, my = 0, build = still ? 1 : 0, t0 = performance.now();
+  var elB = document.getElementById('h-el'), lodB = document.getElementById('h-lod'), rotB = document.getElementById('h-rot');
+  function size() { dpr = Math.min(window.devicePixelRatio || 1, 2); W = window.innerWidth; Hh = window.innerHeight; cv.width = W * dpr; cv.height = Hh * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  function frame(now) {
+    var sy = window.scrollY, max = Math.max(1, document.documentElement.scrollHeight - Hh), s = sy / max;
+    var heroK = Math.min(1, sy / (Hh * 0.75)), wide = W > 900;
+    var th = (still ? 0.6 : (now - t0) * 0.00012) + s * Math.PI * 2.2 + mx * 0.35, ph = 0.42 + my * 0.12 - heroK * 0.1;
+    var cx = W * (wide ? 0.77 - heroK * 0.27 : 0.5), cy = Hh * (wide ? 0.56 : 0.5), sc = Math.min(W, Hh) * (wide ? 0.025 : 0.022) * (1 + heroK * 0.5);
+    var ct = Math.cos(th), sn = Math.sin(th), cp = Math.cos(ph), sp = Math.sin(ph), zc = LV * H / 2;
+    function P(p) { var x = p[0] * ct - p[1] * sn, y = p[0] * sn + p[1] * ct, z = p[2] - zc; var d = y * cp + z * sp, v = z * cp - y * sp, f = 60 / (60 + d); return [cx + x * sc * f, cy - v * sc * f, d]; }
+    ctx.clearRect(0, 0, W, Hh);
+    var alpha = (wide ? 1 : 0.5) * (1 - heroK * 0.78);
+    /* ground grid */
+    ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(70,224,255,' + (0.10 * alpha) + ')'; ctx.beginPath();
+    for (var g = -3; g <= 3; g++) { var a1 = P([g * BAY, -3 * BAY, 0]), b1 = P([g * BAY, 3 * BAY, 0]), a2 = P([-3 * BAY, g * BAY, 0]), b2 = P([3 * BAY, g * BAY, 0]); ctx.moveTo(a1[0], a1[1]); ctx.lineTo(b1[0], b1[1]); ctx.moveTo(a2[0], a2[1]); ctx.lineTo(b2[0], b2[1]); }
+    ctx.stroke();
+    var active = Math.min(LV - 1, Math.floor(s * LV)), built = 0;
+    for (var n = 0; n < N; n++) {
+      var e = els[n], f = Math.max(0, Math.min(1, build * (N + 10) - n)); if (f <= 0) continue; if (f >= 1) built++;
+      var A = P(e.a), B0 = P(e.b), B = [A[0] + (B0[0] - A[0]) * f, A[1] + (B0[1] - A[1]) * f], depth = (A[2] + B0[2]) / 2, near = Math.max(0.25, Math.min(1, 0.72 - depth / 34));
+      var hot = heroK > 0.5 && e.l === active;
+      ctx.strokeStyle = hot ? 'rgba(255,180,84,' + Math.min(1, near * (alpha + 0.35)) + ')' : (e.t === 0 ? 'rgba(70,224,255,' : 'rgba(150,190,214,') + (near * alpha) + ')';
+      ctx.lineWidth = e.t === 0 ? 2.2 : 1.4; ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke();
+      if (f >= 1 && e.t === 0) { ctx.fillStyle = 'rgba(220,230,240,' + (near * alpha) + ')'; ctx.fillRect(B0[0] - 1.6, B0[1] - 1.6, 3.2, 3.2); }
+    }
+    if (elB) { elB.textContent = built + '/' + N; lodB.textContent = [100, 200, 300, 350, 400][Math.min(4, Math.floor(build * 5))]; rotB.textContent = ('00' + (Math.round(th * 57.2958) % 360)).slice(-3) + '°'; }
+    if (!still) { if (build < 1) build = Math.min(1, build + 0.006); requestAnimationFrame(frame); }
+  }
+  size(); window.addEventListener('resize', function () { size(); if (still) frame(t0); });
+  window.addEventListener('pointermove', function (e) { mx = e.clientX / W - 0.5; my = e.clientY / Hh - 0.5; });
+  if (still) { frame(t0); window.addEventListener('scroll', function () { frame(t0); }, { passive: true }); } else requestAnimationFrame(frame);
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
+<script>
+/* Shared motion bootstrap: runs init once fonts are ready; if anything fails, every element is restored to its resting state. */
+window.__motion = function (init) {
+  if (!window.gsap || !window.ScrollTrigger) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  gsap.registerPlugin(ScrollTrigger);
+  var hasSplit = !!window.SplitText; if (hasSplit) gsap.registerPlugin(SplitText);
+  var k = {
+    $: function (q, c) { return Array.prototype.slice.call((c || document).querySelectorAll(q)); },
+    split: function (el, o) { if (!hasSplit || !el) return null; if (o && o.type === 'chars') o.type = 'words,chars'; try { return new SplitText(el, o); } catch (e) { return null; } },
+    st: function (trigger, start) { return { trigger: trigger, start: start || 'top 84%', once: true }; },
+    count: function (el, st) { var n = +el.getAttribute('data-n'), o = { v: 0 }; gsap.to(o, { v: n, duration: 1.4, ease: 'power2.out', scrollTrigger: st, onUpdate: function () { el.textContent = Math.round(o.v); } }); },
+    scramble: function (el, st) {
+      var txt = el.textContent, chars = 'ABCDEFGHJKLMNPRSTUVXYZ0123456789/-', o = { p: 0 };
+      gsap.to(o, { p: 1, duration: Math.min(1.4, 0.4 + txt.length * 0.03), ease: 'none', scrollTrigger: st,
+        onUpdate: function () { var n = Math.floor(o.p * txt.length), s = txt.slice(0, n); for (var i = n; i < txt.length; i++) s += txt[i] === ' ' ? ' ' : chars[(Math.random() * chars.length) | 0]; el.textContent = s; },
+        onComplete: function () { el.textContent = txt; } });
+    },
+    magnet: function (b, f) { var x = gsap.quickTo(b, 'x', { duration: 0.4, ease: 'power3' }), y = gsap.quickTo(b, 'y', { duration: 0.4, ease: 'power3' }); f = f || 0.3;
+      b.addEventListener('pointermove', function (e) { var r = b.getBoundingClientRect(); x((e.clientX - r.left - r.width / 2) * f); y((e.clientY - r.top - r.height / 2) * f); });
+      b.addEventListener('pointerleave', function () { x(0); y(0); }); }
+  };
+  var done = false;
+  var go = function () {
+    if (done) return; done = true;
+    try { document.documentElement.classList.add('motion'); init(k); ScrollTrigger.refresh(); }
+    catch (e) { console.error('motion failed', e);
+      try { ScrollTrigger.getAll().forEach(function (t) { t.kill(true); }); gsap.globalTimeline.clear(); gsap.set('body *', { clearProps: 'all' }); } catch (e2) {}
+      document.documentElement.classList.remove('motion'); }
+  };
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(go); setTimeout(go, 1500); } else go();
+  window.addEventListener('load', function () { try { ScrollTrigger.refresh(); } catch (e) {} });
+};
+</script>
+<script>
+__motion(function (k) {
+  var $ = k.$;
+  $('.top nav a').forEach(function (a) { var s = document.querySelector(a.getAttribute('href')); if (s) ScrollTrigger.create({ trigger: s, start: 'top 50%', end: 'bottom 50%', toggleClass: { targets: a, className: 'on' } }); });
+
+  var t = gsap.timeline({ defaults: { ease: 'power3.out' } }), st0 = { trigger: '.hero', start: 'top 100%', once: true };
+  k.scramble(document.querySelector('.hero .mono'), st0);
+  var h = k.split('.hero h1', { type: 'chars', mask: 'chars' });
+  if (h) t.from(h.chars, { yPercent: 110, duration: 0.8, stagger: 0.035 }, 0.15); else t.from('.hero h1', { y: 40, opacity: 0 }, 0.15);
+  t.from('.role, .sum', { y: 22, opacity: 0, duration: 0.7, stagger: 0.12 }, 0.6).from('.cta .btn', { y: 16, opacity: 0, duration: 0.5, stagger: 0.1 }, 0.95)
+   .from('.hud', { opacity: 0, x: 30, duration: 0.6 }, 1.1).from('.hud > *', { opacity: 0, duration: 0.3, stagger: 0.06 }, 1.3);
+  $('.btn').forEach(function (b) { k.magnet(b, 0.25); });
+
+  $('.num').forEach(function (n, i) { var st = k.st(n, 'top 90%'); gsap.from(n, { y: 30, opacity: 0, duration: 0.6, delay: i * 0.1, ease: 'power3.out', scrollTrigger: st }); k.count(n.querySelector('b'), st); });
+
+  /* each panel opens from its top edge; the file tag decodes, the heading rises */
+  $('.box').forEach(function (b) { var st = k.st(b, 'top 82%');
+    gsap.from(b, { clipPath: 'inset(0 0 100% 0)', duration: 0.9, ease: 'power3.inOut', scrollTrigger: st });
+    $('.tag', b).forEach(function (tg) { var s2 = k.st(tg, 'top 88%'); gsap.from(tg, { opacity: 0, duration: 0.2, scrollTrigger: s2 }); });
+    $('.bh h2', b).forEach(function (h2) { var s2 = k.st(h2, 'top 88%'), sp = k.split(h2, { type: 'lines', mask: 'lines' }); if (sp) gsap.from(sp.lines, { yPercent: 110, duration: 0.8, stagger: 0.1, delay: 0.25, ease: 'power3.out', scrollTrigger: s2 }); }); });
+
+  $('.xp').forEach(function (x) { var st = k.st(x);
+    k.scramble(x.querySelector('.xp-when'), st);
+    gsap.from($('.xp-body > *', x), { x: 30, opacity: 0, duration: 0.6, stagger: 0.07, ease: 'power3.out', scrollTrigger: st }); });
+  gsap.from('.stage', { y: 30, opacity: 0, scale: 0.94, duration: 0.6, stagger: 0.14, ease: 'back.out(1.6)', clearProps: 'transform', scrollTrigger: k.st('.stages') });
+
+  $('.pc').forEach(function (p, i) { var st = k.st(p, 'top 88%'), d = (i % 3) * 0.1;
+    gsap.from(p, { y: 50, opacity: 0, duration: 0.7, delay: d, ease: 'power3.out', clearProps: 'transform', scrollTrigger: st });
+    gsap.fromTo(p.querySelector('.pc-img'), { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: 0.9, delay: d + 0.15, ease: 'power3.inOut', scrollTrigger: st });
+    k.scramble(p.querySelector('.pc-id').firstChild.nodeType === 3 ? p.querySelector('.pc-id span') : p.querySelector('.pc-id'), st); });
+
+  var c = document.querySelector('.cmp'), sv = $('svg', c);
+  gsap.timeline({ scrollTrigger: k.st(c, 'top 78%') })
+    .from($('.raft', sv[0]), { opacity: 0, duration: 0.5 }).from($('.col rect', sv[0]), { scale: 0, transformOrigin: '50% 50%', duration: 0.3, stagger: 0.03, ease: 'back.out(3)' }, '-=0.2')
+    .from('.cmp > span', { x: -16, opacity: 0, duration: 0.4 })
+    .from($('.ft rect', sv[1]), { scale: 0, opacity: 0, transformOrigin: '50% 50%', duration: 0.45, stagger: 0.05, ease: 'back.out(1.8)' })
+    .from($('.col rect', sv[1]), { y: -26, opacity: 0, duration: 0.35, stagger: 0.04, ease: 'bounce.out' }, '-=0.4');
+
+  $('.cols').forEach(function (g) { gsap.from($('.card', g), { y: 36, opacity: 0, duration: 0.6, stagger: 0.09, ease: 'power3.out', scrollTrigger: k.st(g) }); });
+  $('.pills').forEach(function (p) { gsap.from($('.pill', p), { opacity: 0, x: -14, duration: 0.35, stagger: 0.08, scrollTrigger: k.st(p, 'top 92%') }); });
+  gsap.from('.contact h2', { opacity: 0, x: -30, duration: 0.7, ease: 'power3.out', scrollTrigger: k.st('.contact', 'top 75%') });
+  gsap.from('.c-item', { opacity: 0, x: -24, duration: 0.5, stagger: 0.12, ease: 'power2.out', scrollTrigger: k.st('.c-list', 'top 90%') });
+});
+</script>
+</body>
+</html>
